@@ -36,16 +36,28 @@ connection.creation.create_test_db(verbosity=0)
 # -- End hacky Django initialization
 
 import datetime
+import django
 from django.template import Context, Template
-from django.utils import timezone
 from django.test import TestCase as DjangoTestCase
-from django.test.utils import override_settings
 from tests import models as test_models
 from unittest import TestCase
 from wtforms import Form, fields, validators
 from wtforms.compat import text_type
 from wtforms_django.orm import model_form
 from wtforms_django.fields import QuerySetSelectField, ModelSelectField, DateTimeField
+
+if django.VERSION >= (1, 5):
+    from django.utils import timezone
+    from django.test.utils import override_settings
+    has_timezone = True
+else:
+    def override_settings(*args, **kw):
+        def decorator(func):
+            return func
+        return decorator
+
+    has_timezone = False
+
 
 def contains_validator(field, v_type):
     for v in field.validators:
@@ -77,8 +89,13 @@ class TemplateTagsTest(TestCase):
 
     def test_simple_print(self):
         self.assertEqual(self._render('{% autoescape off %}{{ form.a }}{% endautoescape %}'), '<input id="a" name="a" type="text" value="">')
-        self.assertEqual(self._render('{% autoescape off %}{{ form.a.label }}{% endautoescape %}'), '<label for="a">I r label</label>')
+
+    def test_non_templates_calling(self):
+        if django.VERSION < (1, 4):
+            return
         self.assertEqual(self._render('{% autoescape off %}{{ form.a.name }}{% endautoescape %}'), 'a')
+        self.assertEqual(self._render('{% autoescape off %}{{ form.a.label }}{% endautoescape %}'), '<label for="a">I r label</label>')
+
 
     def test_form_field(self):
         self.assertEqual(self._render('{% form_field form.a %}'), '<input id="a" name="a" type="text" value="">')
@@ -185,6 +202,7 @@ class QuerySetSelectFieldTest(DjangoTestCase):
         form = TestForm()
         self.assertEqual(form.a(), ('N:1:USERS', 'N:2:ADMINS'))
 
+
 class ModelSelectFieldTest(DjangoTestCase):
     fixtures = ['ext_django.json']
 
@@ -195,6 +213,7 @@ class ModelSelectFieldTest(DjangoTestCase):
         form = self.F()
         self.assertEqual(form.a(), ('N:1:Users(1)', 'N:2:Admins(2)'))
 
+
 class DateTimeFieldTimezoneTest(DjangoTestCase):
 
     class F(Form):
@@ -202,6 +221,8 @@ class DateTimeFieldTimezoneTest(DjangoTestCase):
 
     @override_settings(USE_TZ=True, TIME_ZONE='America/Los_Angeles')
     def test_convert_input_to_current_timezone(self):
+        if not has_timezone:
+            return
         post_data = {'a': ['2013-09-24 00:00:00']}
         form = self.F(DummyPostData(post_data))
         self.assertTrue(form.validate())
@@ -213,8 +234,12 @@ class DateTimeFieldTimezoneTest(DjangoTestCase):
 
     @override_settings(USE_TZ=True, TIME_ZONE='America/Los_Angeles')
     def test_stored_value_converted_to_current_timezone(self):
+        if not has_timezone:
+            return
+
         utc_date = datetime.datetime(2013, 9, 25, 2, 15, tzinfo=timezone.utc)
         form = self.F(a=utc_date)
+        print form.a()
         self.assertTrue('2013-09-24 19:15:00' in form.a())
 
 
