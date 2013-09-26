@@ -239,7 +239,6 @@ class DateTimeFieldTimezoneTest(DjangoTestCase):
 
         utc_date = datetime.datetime(2013, 9, 25, 2, 15, tzinfo=timezone.utc)
         form = self.F(a=utc_date)
-        print form.a()
         self.assertTrue('2013-09-24 19:15:00' in form.a())
 
 
