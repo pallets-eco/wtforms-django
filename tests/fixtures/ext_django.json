@@ -1,0 +1,12 @@
+[
+  {
+     "model": "tests.group",
+     "pk": 1,
+     "fields": {"name": "Users" }
+  },
+  {
+     "model": "tests.group",
+     "pk": 2,
+     "fields": {"name": "Admins" }
+  }
+]
