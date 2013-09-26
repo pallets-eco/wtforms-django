@@ -18,9 +18,11 @@ matrix:
 
 # command to install dependencies
 install:
-  - "pip install . --use-mirrors"
   - "pip install $DJANGO --use-mirrors"
+  - "pip install . --use-mirrors"
   - "pip install -r tests/requirements.txt --use-mirrors"
 
 # command to run tests
-script: tests/tests.py
+script: coverage run --source=wtforms_django tests/tests.py
+after_success:
+  - coveralls

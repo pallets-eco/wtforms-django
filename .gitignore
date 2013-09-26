@@ -8,6 +8,7 @@
 MANIFEST
 WTForms_Django.egg-info
 .coverage
+.coveralls.yml
 
 # Directories
 build/
