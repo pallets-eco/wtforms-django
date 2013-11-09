@@ -1,7 +1,11 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.contrib.localflavor.us.models import USStateField
+try:
+    from localflavor.us.models import USStateField
+except ImportError:
+    from django.contrib.localflavor.us.models import USStateField
+
 
 class Group(models.Model):
     name  = models.CharField(max_length=20)
