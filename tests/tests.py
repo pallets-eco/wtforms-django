@@ -1,39 +1,7 @@
-#!/usr/bin/env python
+from __future__ import unicode_literals, absolute_import
 
-from __future__ import unicode_literals
-
-import sys, os
-TESTS_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.insert(0, TESTS_DIR)
-
-##########################################################################
-# -- Django Initialization
-#
-# Unfortunately, we cannot do this in the setUp for a test case, as the
-# settings.configure method cannot be called more than once, and we cannot
-# control the order in which tests are run, so making a throwaway test won't
-# work either.
-
-from django.conf import settings
-settings.configure(
-    INSTALLED_APPS = ['tests', 'wtforms_django'],
-    # Django 1.0 to 1.3
-    DATABASE_ENGINE = 'sqlite3',
-    TEST_DATABASE_NAME = ':memory:',
-
-    # Django 1.4
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': ':memory:'
-        }
-    }
-)
-
-from django.db import connection
-connection.creation.create_test_db(verbosity=0)
-
-# -- End hacky Django initialization
+from . import django_setup
+assert django_setup.CONFIGURED
 
 import datetime
 import django
@@ -65,6 +33,7 @@ def contains_validator(field, v_type):
             return True
     return False
 
+
 def lazy_select(field, **kwargs):
     output = []
     for val, label, selected in field.iter_choices():
@@ -72,9 +41,11 @@ def lazy_select(field, **kwargs):
         output.append('%s:%s:%s' % (s, text_type(val), text_type(label)))
     return tuple(output)
 
+
 class DummyPostData(dict):
     def getlist(self, key):
         return self[key]
+
 
 class TemplateTagsTest(TestCase):
     load_tag = '{% load wtforms %}'
@@ -96,14 +67,14 @@ class TemplateTagsTest(TestCase):
         self.assertEqual(self._render('{% autoescape off %}{{ form.a.name }}{% endautoescape %}'), 'a')
         self.assertEqual(self._render('{% autoescape off %}{{ form.a.label }}{% endautoescape %}'), '<label for="a">I r label</label>')
 
-
     def test_form_field(self):
         self.assertEqual(self._render('{% form_field form.a %}'), '<input id="a" name="a" type="text" value="">')
         self.assertEqual(self._render('{% form_field a class=someclass onclick="alert()" %}'),
                          '<input class="CLASSVAL&gt;!" id="a" name="a" onclick="alert()" type="text" value="">')
 
+
 class ModelFormTest(TestCase):
-    F = model_form(test_models.User, exclude=['id'], field_args = {
+    F = model_form(test_models.User, exclude=['id'], field_args={
         'posts': {
             'validators': [validators.NumberRange(min=4, max=7)],
             'description': 'Test'
@@ -157,12 +128,14 @@ class ModelFormTest(TestCase):
         assert isinstance(field, fields.SelectField)
         self.assertEqual(len(field.choices), 3)
 
+
 class QuerySetSelectFieldTest(DjangoTestCase):
     fixtures = ['ext_django.json']
 
     def setUp(self):
-        from django.core.management import call_command
+        #from django.core.management import call_command
         self.queryset = test_models.Group.objects.all()
+
         class F(Form):
             a = QuerySetSelectField(allow_blank=True, get_label='name', widget=lazy_select)
             b = QuerySetSelectField(queryset=self.queryset, widget=lazy_select)
@@ -240,8 +213,3 @@ class DateTimeFieldTimezoneTest(DjangoTestCase):
         utc_date = datetime.datetime(2013, 9, 25, 2, 15, tzinfo=timezone.utc)
         form = self.F(a=utc_date)
         self.assertTrue('2013-09-24 19:15:00' in form.a())
-
-
-if __name__ == '__main__':
-    import unittest
-    unittest.main()
