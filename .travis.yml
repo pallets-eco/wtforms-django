@@ -4,26 +4,31 @@ python:
   - 2.6
   - 2.7
   - 3.3
+
 env:
   global:
     - LOCALFLAVOR=
+    - WTFORMS=WTForms==1.0.5
   matrix:
-    - DJANGO=Django==1.3.7
-    - DJANGO=Django==1.4.10
-    - DJANGO=Django==1.5.5
-    - DJANGO=Django==1.5.5 LOCALFLAVOR=django-localflavor
-    - DJANGO=Django==1.6 LOCALFLAVOR=django-localflavor
+    - DJANGO=1.3.7
+    - DJANGO=1.4.10
+    - DJANGO=1.5.5
+    - DJANGO=1.5.5 WTFORMS=wtforms2
+    - DJANGO=1.5.5 LOCALFLAVOR=django-localflavor
+    - DJANGO=1.6 LOCALFLAVOR=django-localflavor
+    - DJANGO=1.6 WTFORMS=wtforms2 LOCALFLAVOR=django-localflavor
 
 matrix:
   exclude:
     - python: 3.3
-      env: DJANGO=Django==1.3.7
+      env: DJANGO=1.3.7
     - python: 3.3
-      env: DJANGO=Django==1.4.10
+      env: DJANGO=1.4.10
 
 # command to install dependencies
 install:
-  - "pip install $DJANGO $LOCALFLAVOR --use-mirrors"
+  - "[ $WTFORMS = wtforms2 ] && export WTFORMS=https://github.com/wtforms/wtforms/archive/master.zip"
+  - "pip install $WTFORMS Django==$DJANGO $LOCALFLAVOR --use-mirrors"
   - "pip install . --use-mirrors"
   - "pip install -r tests/requirements.txt --use-mirrors"
 
