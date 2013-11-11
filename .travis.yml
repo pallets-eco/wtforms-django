@@ -27,7 +27,7 @@ matrix:
 
 # command to install dependencies
 install:
-  - "[ $WTFORMS = wtforms2 ] && export WTFORMS=https://github.com/wtforms/wtforms/archive/master.zip"
+  - "if [ $WTFORMS = wtforms2 ]; then export WTFORMS=https://github.com/wtforms/wtforms/archive/master.zip; fi"
   - "pip install $WTFORMS Django==$DJANGO $LOCALFLAVOR --use-mirrors"
   - "pip install . --use-mirrors"
   - "pip install -r tests/requirements.txt --use-mirrors"
