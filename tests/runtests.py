@@ -2,6 +2,20 @@
 import os
 import sys
 from unittest import defaultTestLoader, TextTestRunner, TestSuite
+try:
+    from importlib import import_module
+except ImportError:
+    def import_module(path):
+        x = path.rsplit('.', 1)
+        basemod = __import__(x[0], None, None, [x[-1]], 0)
+        if len(x) > 1:
+            try:
+                return getattr(basemod, x[1])
+            except AttributeError:
+                raise ImportError("module '%s' does not have component '%s'" % (x[0], x[1]))
+        else:
+            return basemod
+
 
 TESTS = ('test_basic', 'test_timezone')
 
@@ -10,7 +24,9 @@ def make_suite(prefix='tests.', extra=(), force_all=False):
     tests = TESTS + extra
     test_names = list(prefix + x for x in tests)
     suite = TestSuite()
-    suite.addTest(defaultTestLoader.loadTestsFromNames(test_names))
+    for name in test_names:
+        module = import_module(name)
+        suite.addTest(defaultTestLoader.loadTestsFromModule(module))
     return suite
 
 
