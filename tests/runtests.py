@@ -3,7 +3,7 @@ import os
 import sys
 from unittest import defaultTestLoader, TextTestRunner, TestSuite
 
-TESTS = ('tests_basic', )
+TESTS = ('test_basic', 'test_timezone')
 
 
 def make_suite(prefix='tests.', extra=(), force_all=False):

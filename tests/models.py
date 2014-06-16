@@ -15,6 +15,7 @@ class Group(models.Model):
 
     __str__ = __unicode__
 
+
 class User(models.Model):
     username = models.CharField(max_length=40)
     group    = models.ForeignKey(Group)
@@ -30,4 +31,3 @@ class User(models.Model):
     time1    = models.TimeField()
     slug     = models.SlugField()
     nullbool = models.NullBooleanField()
-
