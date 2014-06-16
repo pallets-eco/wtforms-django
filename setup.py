@@ -27,6 +27,6 @@ setup(
     ],
     package_data={
     },
-    test_suite='tests.tests',
+    test_suite='tests.runtests',
     install_requires=['WTForms>=1.0.5', 'Django>=1.3'],
 )
