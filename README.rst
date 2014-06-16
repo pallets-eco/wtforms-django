@@ -7,9 +7,8 @@ function the same as ``wtforms.ext.django`` did.
 
 to install::
 	
-	pip install https://github.com/wtforms/wtforms-django/archive/master.zip
+	pip install WTForms-Django
 
-(pypi package coming soon)
 
 Rationale
 ---------
