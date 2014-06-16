@@ -1,5 +1,4 @@
 Django>=1.4
 WTForms>=1.0.5
 coverage
-coveralls
 pep8
