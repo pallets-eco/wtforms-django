@@ -18,7 +18,7 @@ class TemplateTagsTest(TestCase):
     load_tag = '{% load wtforms %}'
 
     class F(Form):
-        a = fields.TextField('I r label')
+        a = fields.StringField('I r label')
         b = fields.SelectField(choices=[('a', 'hi'), ('b', 'bai')])
 
     def _render(self, source):
@@ -77,13 +77,13 @@ class ModelFormTest(TestCase):
         self.assertEqual(type(self.form.file), fields.FileField)
         self.assertEqual(type(self.form.file2), fields.FileField)
         self.assertEqual(type(self.form_with_pk.id), fields.IntegerField)
-        self.assertEqual(type(self.form.slug), fields.TextField)
+        self.assertEqual(type(self.form.slug), fields.StringField)
         self.assertEqual(type(self.form.birthday), fields.DateField)
 
     def test_custom_converters(self):
-        self.assertEqual(type(self.form.email), fields.TextField)
+        self.assertEqual(type(self.form.email), fields.StringField)
         self.assertTrue(contains_validator(self.form.email, validators.Email))
-        self.assertEqual(type(self.form.reg_ip), fields.TextField)
+        self.assertEqual(type(self.form.reg_ip), fields.StringField)
         self.assertTrue(contains_validator(self.form.reg_ip, validators.IPAddress))
         self.assertEqual(type(self.form.group_id), ModelSelectField)
 

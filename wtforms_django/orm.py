@@ -53,8 +53,8 @@ class ModelConverter(ModelConverterBase):
         f.DateTimeField: ['DateTimeField'],
         f.DateField: ['DateField'],
         f.BooleanField: ['BooleanField'],
-        f.TextField: ['CharField', 'PhoneNumberField', 'SlugField'],
-        f.TextAreaField: ['TextField', 'XMLField'],
+        f.StringField: ['CharField', 'PhoneNumberField', 'SlugField'],
+        f.TextAreaField: ['StringField', 'XMLField'],
     }
 
     def __init__(self, extra_converters=None, simple_conversions=None):
@@ -89,15 +89,15 @@ class ModelConverter(ModelConverterBase):
 
     def conv_EmailField(self, model, field, kwargs):
         kwargs['validators'].append(validators.email())
-        return f.TextField(**kwargs)
+        return f.StringField(**kwargs)
 
     def conv_IPAddressField(self, model, field, kwargs):
         kwargs['validators'].append(validators.ip_address())
-        return f.TextField(**kwargs)
+        return f.StringField(**kwargs)
 
     def conv_URLField(self, model, field, kwargs):
         kwargs['validators'].append(validators.url())
-        return f.TextField(**kwargs)
+        return f.StringField(**kwargs)
 
     def conv_NullBooleanField(self, model, field, kwargs):
         from django.db.models.fields import NOT_PROVIDED
