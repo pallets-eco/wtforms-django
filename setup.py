@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='WTForms-Django',
-    version='0.1',
+    version='0.2dev',
     url='http://github.com/wtforms/wtforms-appengine/',
     license='BSD',
     author='Thomas Johansson, James Crasta',
