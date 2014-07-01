@@ -30,7 +30,7 @@ install:
   - "pip install -r tests/requirements.txt --use-mirrors"
 
 # command to run tests
-script: coverage run --source=wtforms_django tests/runtests.py --with-pep8 --force-all
+script: coverage run tests/runtests.py --with-pep8 --force-all
 after_success:
   - pip install coveralls
   - coveralls
