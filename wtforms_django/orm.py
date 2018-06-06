@@ -5,9 +5,7 @@ from wtforms.compat import iteritems
 from wtforms_django.fields import ModelSelectField
 
 
-__all__ = (
-    'model_fields', 'model_form',
-)
+__all__ = ("model_fields", "model_form")
 
 
 class ModelConverterBase(object):
@@ -16,42 +14,48 @@ class ModelConverterBase(object):
 
     def convert(self, model, field, field_args):
         kwargs = {
-            'label': field.verbose_name,
-            'description': field.help_text,
-            'validators': [],
-            'filters': [],
-            'default': field.default,
+            "label": field.verbose_name,
+            "description": field.help_text,
+            "validators": [],
+            "filters": [],
+            "default": field.default,
         }
         if field_args:
             kwargs.update(field_args)
 
         if field.blank:
-            kwargs['validators'].append(validators.Optional())
+            kwargs["validators"].append(validators.Optional())
         if field.max_length is not None and field.max_length > 0:
-            kwargs['validators'].append(validators.Length(max=field.max_length))
+            kwargs["validators"].append(validators.Length(max=field.max_length))
 
         ftype = type(field).__name__
         if field.choices:
-            kwargs['choices'] = field.choices
+            kwargs["choices"] = field.choices
             return f.SelectField(**kwargs)
         elif ftype in self.converters:
             return self.converters[ftype](model, field, kwargs)
         else:
-            converter = getattr(self, 'conv_%s' % ftype, None)
+            converter = getattr(self, "conv_%s" % ftype, None)
             if converter is not None:
                 return converter(model, field, kwargs)
 
 
 class ModelConverter(ModelConverterBase):
     DEFAULT_SIMPLE_CONVERSIONS = {
-        f.IntegerField: ['AutoField', 'IntegerField', 'SmallIntegerField', 'PositiveIntegerField', 'PositiveSmallIntegerField'],
-        f.DecimalField: ['DecimalField', 'FloatField'],
-        f.FileField: ['FileField', 'FilePathField', 'ImageField'],
-        f.DateTimeField: ['DateTimeField'],
-        f.DateField: ['DateField'],
-        f.BooleanField: ['BooleanField'],
-        f.StringField: ['CharField', 'PhoneNumberField', 'SlugField'],
-        f.TextAreaField: ['StringField', 'XMLField'],
+        f.IntegerField: [
+            "AutoField",
+            "IntegerField",
+            "SmallIntegerField",
+            "PositiveIntegerField",
+            "PositiveSmallIntegerField",
+        ],
+        f.DecimalField: ["DecimalField", "FloatField"],
+        f.FileField: ["FileField", "FilePathField", "ImageField"],
+        f.DateTimeField: ["DateTimeField"],
+        f.DateField: ["DateField"],
+        f.BooleanField: ["BooleanField"],
+        f.StringField: ["CharField", "PhoneNumberField", "SlugField"],
+        f.TextAreaField: ["StringField", "XMLField"],
     }
 
     def __init__(self, extra_converters=None, simple_conversions=None):
@@ -70,6 +74,7 @@ class ModelConverter(ModelConverterBase):
     def make_simple_converter(self, field_type):
         def _converter(model, field, kwargs):
             return field_type(**kwargs)
+
         return _converter
 
     def conv_ForeignKey(self, model, field, kwargs):
@@ -81,26 +86,27 @@ class ModelConverter(ModelConverterBase):
                 return obj.time()
             except AttributeError:
                 return obj
-        kwargs['filters'].append(time_only)
-        return f.DateTimeField(format='%H:%M:%S', **kwargs)
+
+        kwargs["filters"].append(time_only)
+        return f.DateTimeField(format="%H:%M:%S", **kwargs)
 
     def conv_EmailField(self, model, field, kwargs):
-        kwargs['validators'].append(validators.email())
+        kwargs["validators"].append(validators.email())
         return f.StringField(**kwargs)
 
     def conv_IPAddressField(self, model, field, kwargs):
-        kwargs['validators'].append(validators.ip_address())
+        kwargs["validators"].append(validators.ip_address())
         return f.StringField(**kwargs)
 
     def conv_URLField(self, model, field, kwargs):
-        kwargs['validators'].append(validators.url())
+        kwargs["validators"].append(validators.url())
         return f.StringField(**kwargs)
 
     def conv_NullBooleanField(self, model, field, kwargs):
         from django.db.models.fields import NOT_PROVIDED
 
         def coerce_nullbool(value):
-            d = {'None': None, None: None, 'True': True, 'False': False}
+            d = {"None": None, None: None, "True": True, "False": False}
             if isinstance(value, NOT_PROVIDED):
                 return None
             elif value in d:
@@ -108,7 +114,7 @@ class ModelConverter(ModelConverterBase):
             else:
                 return bool(int(value))
 
-        choices = ((None, 'Unknown'), (True, 'Yes'), (False, 'No'))
+        choices = ((None, "Unknown"), (True, "Yes"), (False, "No"))
         return f.SelectField(choices=choices, coerce=coerce_nullbool, **kwargs)
 
 
@@ -135,7 +141,9 @@ def model_fields(model, only=None, exclude=None, field_args=None, converter=None
     return field_dict
 
 
-def model_form(model, base_class=Form, only=None, exclude=None, field_args=None, converter=None):
+def model_form(
+    model, base_class=Form, only=None, exclude=None, field_args=None, converter=None
+):
     """Create a :class:`~wtforms.form.Form` with fields and validation
     representing a Django model.
 
@@ -166,4 +174,4 @@ def model_form(model, base_class=Form, only=None, exclude=None, field_args=None,
         model properties. If not set, :class:`ModelConverter` is used.
     """
     field_dict = model_fields(model, only, exclude, field_args, converter)
-    return type(model._meta.object_name + 'Form', (base_class, ), field_dict)
+    return type(model._meta.object_name + "Form", (base_class,), field_dict)
