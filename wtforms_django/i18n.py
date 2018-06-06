@@ -3,10 +3,10 @@ from wtforms import form
 
 
 class DjangoTranslations(object):
+    """A translations object for WTForms that gets its messages from
+    Django's translations providers.
     """
-    A translations object for WTForms that gets its messages from django's
-    translations providers.
-    """
+
     def gettext(self, string):
         return ugettext(string)
 
@@ -15,9 +15,10 @@ class DjangoTranslations(object):
 
 
 class Form(form.Form):
+    """A :class:`~wtforms.form.Form` that uses the Django's I18N
+    support for translations.
     """
-    A Form derivative which uses the translations engine from django.
-    """
+
     _django_translations = DjangoTranslations()
 
     def _get_translations(self):

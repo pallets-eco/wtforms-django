@@ -1,6 +1,3 @@
-"""
-Tools for generating forms based on Django models.
-"""
 from wtforms import fields as f
 from wtforms import Form
 from wtforms import validators
@@ -116,10 +113,9 @@ class ModelConverter(ModelConverterBase):
 
 
 def model_fields(model, only=None, exclude=None, field_args=None, converter=None):
-    """
-    Generate a dictionary of fields for a given Django model.
+    """Generate a dictionary of fields for a given Django model.
 
-    See `model_form` docstring for description of parameters.
+    See :func:`model_form` for a description of the parameters.
     """
     converter = converter or ModelConverter()
     field_args = field_args or {}
@@ -140,29 +136,34 @@ def model_fields(model, only=None, exclude=None, field_args=None, converter=None
 
 
 def model_form(model, base_class=Form, only=None, exclude=None, field_args=None, converter=None):
-    """
-    Create a wtforms Form for a given Django model class::
+    """Create a :class:`~wtforms.form.Form` with fields and validation
+    representing a Django model.
+
+    For example, converting a :class:`~django.db.models.EmailField` will
+    result in a :class:`~wtforms.fields.StringField` with the
+    :class:`~wtforms.validators.Email` validator on it. If the ``blank``
+    property is set on a model field, the resulting form field will have
+    the :class:`~wtforms.validators.Optional` validator set.
+
+    .. code-block:: python
 
         from wtforms_django.orm import model_form
         from myproject.myapp.models import User
         UserForm = model_form(User)
 
-    :param model:
-        A Django ORM model class
-    :param base_class:
-        Base form class to extend from. Must be a ``wtforms.Form`` subclass.
-    :param only:
-        An optional iterable with the property names that should be included in
-        the form. Only these properties will have fields.
-    :param exclude:
-        An optional iterable with the property names that should be excluded
-        from the form. All other properties will have fields.
-    :param field_args:
-        An optional dictionary of field names mapping to keyword arguments used
-        to construct each field object.
-    :param converter:
-        A converter to generate the fields based on the model properties. If
-        not set, ``ModelConverter`` is used.
+    :param model: A Django ORM model class.
+    :param base_class: Base form class to extend from. Must be a
+        :class:`~wtforms.form.Form` subclass.
+    :param only: An optional iterable with the attribute names that
+        should be included in the form. Only these attributes will have
+        fields.
+    :param exclude: An optional iterable with the attribute names that
+        should be excluded from the form. All other attributes will have
+        fields.
+    :param field_args: An optional dictionary of attribute names mapping
+        to keyword arguments used to construct each field object.
+    :param converter: A converter to generate the fields based on the
+        model properties. If not set, :class:`ModelConverter` is used.
     """
     field_dict = model_fields(model, only, exclude, field_args, converter)
     return type(model._meta.object_name + 'Form', (base_class, ), field_dict)

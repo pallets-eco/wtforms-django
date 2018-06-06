@@ -1,17 +1,20 @@
-.. WTForms-Django documentation master file, created by
-   sphinx-quickstart on Sun Nov 10 16:35:07 2013.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+WTForms-Django
+==============
 
-WTForms-Django documentation
-============================
+This extension integrates `Django`_ with `WTForms`_. Features include:
 
-Contents:
+-   Generate forms from Django models.
+-   Template tags to help render form fields in Django templates.
+-   Use Django's I18N for translations.
+
+.. _Django: https://www.djangoproject.com/
+.. _WTForms: https://wtforms.readthedocs.io/
 
 .. toctree::
-   :maxdepth: 2
+    :caption: Contents:
+    :maxdepth: 2
 
-   wtforms_django
+    wtforms_django
 
 
 Indices and tables
@@ -20,4 +23,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
