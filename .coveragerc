@@ -1,8 +1,0 @@
-[run]
-include =
-    wtforms_django/*
-
-[report]
-exclude_lines =
-    pragma: no cover
-    except ImportError:
