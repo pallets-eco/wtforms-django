@@ -7,7 +7,7 @@ This extension integrates `Django`_ with `WTForms`_. Features include:
 -   Template tags to help render form fields in Django templates.
 -   Use Django's I18N for translations.
 
-.. _Django: https://djangoproject.com/
+.. _Django: https://www.djangoproject.com/
 .. _WTForms: https://wtforms.readthedocs.io/
 
 

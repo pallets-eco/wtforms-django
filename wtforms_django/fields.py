@@ -1,6 +1,3 @@
-"""
-Useful form fields for use with the Django ORM.
-"""
 from __future__ import unicode_literals
 
 import datetime
@@ -23,23 +20,45 @@ __all__ = (
 
 
 class QuerySetSelectField(fields.SelectFieldBase):
-    """
-    Given a QuerySet either at initialization or inside a view, will display a
-    select drop-down field of choices. The `data` property actually will
-    store/keep an ORM model instance, not the ID. Submitting a choice which is
-    not in the queryset will result in a validation error.
+    """A :class:`~wtforms.fields.SelectField` with the choices
+    populated from the results of a Django
+    :class:`~django.db.models.query.QuerySet`.
 
-    Specify `get_label` to customize the label associated with each option. If
-    a string, this is the name of an attribute on the model object to use as
-    the label text. If a one-argument callable, this callable will be passed
-    model instance and expected to return the label text. Otherwise, the model
-    object's `__str__` or `__unicode__` will be used.
+    .. code-block:: python
 
-    If `allow_blank` is set to `True`, then a blank choice will be added to the
-    top of the list. Selecting this choice will result in the `data` property
-    being `None`.  The label for the blank choice can be set by specifying the
-    `blank_text` parameter.
+        category = QuerySetSelectField(queryset=Category.objects.all())
+
+    The values passed in the request are the primary keys, but the
+    ``data`` attribute of the field will be the actual model instance.
+
+    By default each option displays the result of ``str(instance)``, but
+    this can be customized by passing the ``get_label`` argument.
+
+    To customize the query based on the request, you can set the
+    ``queryset`` attribute after creating the form instance. For
+    example, to limit the values based on the logged in user:
+
+    .. code-block:: python
+
+        class ArticleEdit(Form):
+            title = StringField()
+            series = QuerySetSelectField(allow_blank=True)
+
+        def edit_article(request, id):
+            article = Article.objects.get(pk=id)
+            form = ArticleEdit(obj=article)
+            form.series.queryset = Series.objects.filter(author=request.user)
+            ...
+
+    :param queryset: Populate the select with results from this query.
+    :param get_label: The name of a model attribute to use to get the
+        label for each item. Or a callable that takes a model instance
+        and returns a label for it.
+    :param allow_blank: Add a blank choice to the top of the list.
+        Selecting it sets ``data`` to ``None``.
+    :param blank_text: The label for the blank choice.
     """
+
     widget = widgets.Select()
 
     def __init__(self, label=None, validators=None, queryset=None, get_label=None, allow_blank=False, blank_text='', **kwargs):
@@ -96,19 +115,25 @@ class QuerySetSelectField(fields.SelectFieldBase):
 
 
 class ModelSelectField(QuerySetSelectField):
+    """Like a :class:`QuerySetSelectField`, except takes a model class
+    to query all of its objects instead of a specific query.
+
+    .. code-block:: python
+
+        category = ModelSelectField(model=Category)
+
+    :param: model: The model to query.
     """
-    Like a QuerySetSelectField, except takes a model class instead of a
-    queryset and lists everything in it.
-    """
+
     def __init__(self, label=None, validators=None, model=None, **kwargs):
         super(ModelSelectField, self).__init__(label, validators, queryset=model._default_manager.all(), **kwargs)
 
 
 class DateTimeField(fields.DateTimeField):
+    """A :class:`~wtforms.fields.DateTimeField` with support for
+    Django's timezone utilities.
     """
-    Adds support for Django's timezone utilities.
-    Requires Django >= 1.4
-    """
+
     def __init__(self, *args, **kwargs):
         if not has_timezone:
             raise ImportError('DateTimeField does not work without Django >= 1.5')
