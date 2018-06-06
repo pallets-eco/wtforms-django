@@ -6,7 +6,7 @@ __pycache__/
 .DS_Store
 env/
 venv/
-WTForms_Django.egg-info/
+src/WTForms_Django.egg-info/
 .eggs/
 wtforms/locale/**/wtforms.mo
 build/
