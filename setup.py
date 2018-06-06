@@ -1,5 +1,3 @@
-from collections import OrderedDict
-
 import io
 from setuptools import find_packages, setup
 
@@ -10,13 +8,11 @@ setup(
     name="WTForms-Django",
     version="0.2dev",
     url="https://github.com/wtforms/wtforms-django",
-    project_urls=OrderedDict(
-        (
-            ("Documentation", "https://wtforms-django.readthedocs.io/"),
-            ("Code", "https://github.com/wtforms/wtforms"),
-            ("Issue tracker", "https://github.com/wtforms/wtforms/issues"),
-        )
-    ),
+    project_urls={
+        "Documentation": "https://wtforms-django.readthedocs.io/",
+        "Code": "https://github.com/wtforms/wtforms",
+        "Issue tracker": "https://github.com/wtforms/wtforms/issues",
+    },
     license="BSD",
     maintainer="WTForms team",
     maintainer_email="davidism+wtforms@gmail.com",
@@ -39,7 +35,8 @@ setup(
         "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    packages=find_packages(exclude=("tests",)),
+    packages=find_packages("src"),
+    package_dir={"": "src"},
     include_package_data=True,
     python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",
     install_requires=["WTForms>=2.1", "Django>=1.3"],
