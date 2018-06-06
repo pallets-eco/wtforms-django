@@ -1,18 +1,20 @@
-# File extensions
 *.pyc
 *.pyo
+__pycache__/
 .*.swp
+.idea/
 .DS_Store
-
-# Extra Files
-MANIFEST
-WTForms_Django.egg-info
-.coverage
-.coveralls.yml
-
-# Directories
+env/
+venv/
+WTForms_Django.egg-info/
+.eggs/
+wtforms/locale/**/wtforms.mo
 build/
 dist/
 docs/_build
-docs/html
-env/
+.pytest_cache/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+.eggs/
