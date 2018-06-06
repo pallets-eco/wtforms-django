@@ -11,8 +11,8 @@ def contains_validator(field, v_type):
 def lazy_select(field, **kwargs):
     output = []
     for val, label, selected in field.iter_choices():
-        s = selected and 'Y' or 'N'
-        output.append('%s:%s:%s' % (s, text_type(val), text_type(label)))
+        s = selected and "Y" or "N"
+        output.append("%s:%s:%s" % (s, text_type(val), text_type(label)))
     return tuple(output)
 
 

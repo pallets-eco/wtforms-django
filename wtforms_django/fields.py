@@ -6,6 +6,7 @@ import operator
 try:
     from django.conf import settings
     from django.utils import timezone
+
     has_timezone = True
 except ImportError:
     has_timezone = False
@@ -14,9 +15,7 @@ from wtforms import fields, widgets
 from wtforms.compat import string_types
 from wtforms.validators import ValidationError
 
-__all__ = (
-    'ModelSelectField', 'QuerySetSelectField', 'DateTimeField'
-)
+__all__ = ("ModelSelectField", "QuerySetSelectField", "DateTimeField")
 
 
 class QuerySetSelectField(fields.SelectFieldBase):
@@ -61,7 +60,16 @@ class QuerySetSelectField(fields.SelectFieldBase):
 
     widget = widgets.Select()
 
-    def __init__(self, label=None, validators=None, queryset=None, get_label=None, allow_blank=False, blank_text='', **kwargs):
+    def __init__(
+        self,
+        label=None,
+        validators=None,
+        queryset=None,
+        get_label=None,
+        allow_blank=False,
+        blank_text="",
+        **kwargs
+    ):
         super(QuerySetSelectField, self).__init__(label, validators, **kwargs)
         self.allow_blank = allow_blank
         self.blank_text = blank_text
@@ -92,14 +100,14 @@ class QuerySetSelectField(fields.SelectFieldBase):
 
     def iter_choices(self):
         if self.allow_blank:
-            yield ('__None', self.blank_text, self.data is None)
+            yield ("__None", self.blank_text, self.data is None)
 
         for obj in self.queryset:
             yield (obj.pk, self.get_label(obj), obj == self.data)
 
     def process_formdata(self, valuelist):
         if valuelist:
-            if valuelist[0] == '__None':
+            if valuelist[0] == "__None":
                 self.data = None
             else:
                 self._data = None
@@ -111,7 +119,7 @@ class QuerySetSelectField(fields.SelectFieldBase):
                 if self.data == obj:
                     break
             else:
-                raise ValidationError(self.gettext('Not a valid choice'))
+                raise ValidationError(self.gettext("Not a valid choice"))
 
 
 class ModelSelectField(QuerySetSelectField):
@@ -126,7 +134,9 @@ class ModelSelectField(QuerySetSelectField):
     """
 
     def __init__(self, label=None, validators=None, model=None, **kwargs):
-        super(ModelSelectField, self).__init__(label, validators, queryset=model._default_manager.all(), **kwargs)
+        super(ModelSelectField, self).__init__(
+            label, validators, queryset=model._default_manager.all(), **kwargs
+        )
 
 
 class DateTimeField(fields.DateTimeField):
@@ -136,7 +146,7 @@ class DateTimeField(fields.DateTimeField):
 
     def __init__(self, *args, **kwargs):
         if not has_timezone:
-            raise ImportError('DateTimeField does not work without Django >= 1.5')
+            raise ImportError("DateTimeField does not work without Django >= 1.5")
         super(DateTimeField, self).__init__(*args, **kwargs)
 
     def process_formdata(self, valuelist):
@@ -148,6 +158,10 @@ class DateTimeField(fields.DateTimeField):
 
     def _value(self):
         date = self.data
-        if settings.USE_TZ and isinstance(date, datetime.datetime) and timezone.is_aware(date):
+        if (
+            settings.USE_TZ
+            and isinstance(date, datetime.datetime)
+            and timezone.is_aware(date)
+        ):
             self.data = timezone.localtime(date)
         return super(DateTimeField, self)._value()

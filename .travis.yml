@@ -24,6 +24,7 @@ install:
 
 script:
   - coverage run tests/runtests.py --with-pep8 --force-all
+  - black --check .
 
 after_success:
   - pip install coveralls
