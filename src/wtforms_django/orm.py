@@ -78,7 +78,7 @@ class ModelConverter(ModelConverterBase):
         return _converter
 
     def conv_ForeignKey(self, model, field, kwargs):
-        return ModelSelectField(model=field.rel.to, **kwargs)
+        return ModelSelectField(model=field.related_model, **kwargs)
 
     def conv_TimeField(self, model, field, kwargs):
         def time_only(obj):

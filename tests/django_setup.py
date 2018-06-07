@@ -1,7 +1,7 @@
 import sys
 import os
 
-TESTS_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), ".."))
+TESTS_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), "../src"))
 if TESTS_DIR not in sys.path:
     sys.path.insert(0, TESTS_DIR)
 
@@ -13,16 +13,13 @@ if TESTS_DIR not in sys.path:
 # control the order in which tests are run, so making a throwaway test won't
 # work either.
 
+import django
 from django.conf import settings
+import django_settings
 
-settings.configure(
-    INSTALLED_APPS=["tests", "wtforms_django"],
-    # Django 1.0 to 1.3
-    DATABASE_ENGINE="sqlite3",
-    TEST_DATABASE_NAME=":memory:",
-    # Django 1.4+
-    DATABASES={"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}},
-)
+
+settings.configure(default_settings=django_settings)
+django.setup()
 
 from django.db import connection
 
