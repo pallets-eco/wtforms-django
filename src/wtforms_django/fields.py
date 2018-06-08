@@ -1,16 +1,9 @@
 from __future__ import unicode_literals
 
 import datetime
+from django.conf import settings
+from django.utils import timezone
 import operator
-
-try:
-    from django.conf import settings
-    from django.utils import timezone
-
-    has_timezone = True
-except ImportError:
-    has_timezone = False
-
 from wtforms import fields, widgets
 from wtforms.compat import string_types
 from wtforms.validators import ValidationError
@@ -143,11 +136,6 @@ class DateTimeField(fields.DateTimeField):
     """A :class:`~wtforms.fields.DateTimeField` with support for
     Django's timezone utilities.
     """
-
-    def __init__(self, *args, **kwargs):
-        if not has_timezone:
-            raise ImportError("DateTimeField does not work without Django >= 1.5")
-        super(DateTimeField, self).__init__(*args, **kwargs)
 
     def process_formdata(self, valuelist):
         super(DateTimeField, self).process_formdata(valuelist)
