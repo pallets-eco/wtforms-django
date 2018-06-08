@@ -19,7 +19,7 @@ class Group(models.Model):
 
 class User(models.Model):
     username = models.CharField(max_length=40)
-    group = models.ForeignKey(Group)
+    group = models.ForeignKey(Group, on_delete=models.SET_NULL)
     birthday = models.DateField(help_text="Teh Birthday")
     email = models.EmailField(blank=True)
     posts = models.PositiveSmallIntegerField()

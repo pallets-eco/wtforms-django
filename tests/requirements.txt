@@ -1,3 +1,5 @@
-Django>=1.4
-WTForms>=1.0.5
+Django>=1.11
+WTForms>=2.1
+pytest
 coverage
+django-localflavor

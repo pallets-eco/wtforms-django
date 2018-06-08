@@ -8,23 +8,30 @@ python:
   - 2.7
   - nightly
   - pypy3
-
 env:
-  matrix:
-    - DJANGO="<1.5"
-    - DJANGO="<1.6"
-    - DJANGO="<1.6" LOCALFLAVOR=django-localflavor
-    - DJANGO="<1.7"
-    - DJANGO="<1.7" LOCALFLAVOR=django-localflavor
+  - DJANGO=""
+
+matrix:
+  include:
+    - env: DJANGO=">=1.11,<2"
+      python: 2.7
+    - env: DJANGO=">=1.11,<2"
+      python: 3.4
+  exclude:
+    - env: DJANGO=""
+      python: 2.7
+  allow_failures:
+    - python: nightly
+    - python: pypy3
+  fast_finish: true
 
 install:
-  - pip install Django$DJANGO $LOCALFLAVOR black
+  - pip install Django$DJANGO
   - pip install .
   - pip install -r tests/requirements.txt
 
 script:
-  - coverage run tests/runtests.py --with-pep8 --force-all
-  - black --check .
+  - coverage run -m pytest
 
 after_success:
   - pip install coveralls

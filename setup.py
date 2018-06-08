@@ -1,3 +1,4 @@
+#! /usr/bin/python
 import io
 from setuptools import find_packages, setup
 
@@ -39,5 +40,5 @@ setup(
     package_dir={"": "src"},
     include_package_data=True,
     python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",
-    install_requires=["WTForms>=2.1", "Django>=1.3"],
+    install_requires=["WTForms>=2.1", "Django>=1.11"],
 )
