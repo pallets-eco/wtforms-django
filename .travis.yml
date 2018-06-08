@@ -8,34 +8,21 @@ python:
   - 2.7
   - nightly
   - pypy3
-env:
-  - DJANGO=""
+env: TOXENV=py,coveralls
 
 matrix:
   include:
-    - env: DJANGO=">=1.11,<2"
-      python: 2.7
-    - env: DJANGO=">=1.11,<2"
-      python: 3.4
-  exclude:
-    - env: DJANGO=""
-      python: 2.7
+    - env: TOXENV=stylecheck,docs-html
   allow_failures:
     - python: nightly
     - python: pypy3
   fast_finish: true
 
 install:
-  - pip install Django$DJANGO
-  - pip install .
-  - pip install -r tests/requirements.txt
+  - pip install tox
 
 script:
-  - coverage run -m pytest
-
-after_success:
-  - pip install coveralls
-  - coveralls
+  - tox
 
 cache:
   - pip
