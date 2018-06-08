@@ -15,7 +15,7 @@ if TESTS_DIR not in sys.path:
 
 import django
 from django.conf import settings
-import django_settings
+from . import django_settings
 
 
 settings.configure(default_settings=django_settings)

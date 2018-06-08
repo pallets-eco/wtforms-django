@@ -8,27 +8,30 @@ python:
   - 2.7
   - nightly
   - pypy3
-
 env:
-  - DJANGO="<1.12"
-  - DJANGO="<2.1"
-  - DJANGO="master"
+  - DJANGO=""
+
 matrix:
-  exclude:
-    - env: DJANGO="<2.1"
+  include:
+    - env: DJANGO=">=1.11,<2"
       python: 2.7
-    - env: DJANGO="master"
+    - env: DJANGO=">=1.11,<2"
       python: 3.4
+  exclude:
+    - env: DJANGO=""
+      python: 2.7
   allow_failures:
     - python: nightly
-    - env: DJANGO="master"
+    - python: pypy3
+  fast_finish: true
 
 install:
   - pip install Django$DJANGO
+  - pip install .
   - pip install -r tests/requirements.txt
 
 script:
-  - coverage run tests/runtests.py --force-all
+  - coverage run -m pytest
 
 after_success:
   - pip install coveralls
@@ -40,7 +43,6 @@ cache:
 branches:
   only:
     - master
-    - test
     - /^.*-maintenance$/
 
 notifications:
